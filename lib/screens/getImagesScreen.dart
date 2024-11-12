@@ -21,7 +21,7 @@ class _GetimagesscreenState extends ConsumerState<Getimagesscreen> {
   CameraController? _controller;
   @override
   void initState() {
-    _initializeCamera();
+    // _initializeCamera();
     super.initState();
   }
 
