@@ -73,7 +73,7 @@ class _ImagedownscreenState extends ConsumerState<Imagedownscreen> {
         RenderRepaintBoundary? boundary =
             key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
         if (boundary != null) {
-          final image = await boundary.toImage(pixelRatio: 2);
+          final image = await boundary.toImage(pixelRatio: 1.2);
           final byteData = await image.toByteData(format: ImageByteFormat.png);
           Uint8List pngBytes = byteData!.buffer.asUint8List();
 
@@ -87,7 +87,6 @@ class _ImagedownscreenState extends ConsumerState<Imagedownscreen> {
             backgroundBottomColor: "#000000",
             appId: 'com.yeah.owlfourcut',
           );
-          print('object');
         } else {
           debugPrint("Boundary is null");
         }
