@@ -37,11 +37,11 @@ class _GetimagesscreenState extends ConsumerState<Getimagesscreen> {
     setState(() {});
   }
 
-  @override
-  void dispose() {
-    _controller!.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _controller?.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
