@@ -57,5 +57,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<!--  위는 테스트 아래는 릴리즈-->
+	<!-- <string>ca-app-pub-3557360586533236~3255251743</string>  -->
 </dict>
 </plist>
