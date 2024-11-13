@@ -81,16 +81,24 @@ class _ImagedownscreenState extends ConsumerState<Imagedownscreen> {
           File file = await File('${tempDir.path}/shared_image.png').create();
           await file.writeAsBytes(pngBytes);
 
-          SocialShare.shareInstagramStory(
+          String? aa = await SocialShare.shareInstagramStory(
             imagePath: file.path,
             backgroundTopColor: "#ffffff",
             backgroundBottomColor: "#000000",
             appId: 'com.yeah.owlfourcut',
           );
+          if (aa != 'success') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('인스타그램이 설치되어있지 않습니다.')),
+            );
+          }
         } else {
           debugPrint("Boundary is null");
         }
       } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('인스타그램이 설치되어있지 않습니다.')),
+        );
         debugPrint('error: $e');
       }
     }
