@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:owlfourcut/screens/getImagesScreen.dart';
 import 'package:owlfourcut/screens/guestBook.dart';
+import 'package:owlfourcut/viewModels/myTextVM.dart';
 
 class Splashscreen extends ConsumerStatefulWidget {
   const Splashscreen({super.key});
@@ -58,6 +59,8 @@ class _SplashscreenState extends ConsumerState<Splashscreen> {
                 const Gap(30),
                 GestureDetector(
                     onTap: () {
+                      ref.read(mytextProvider.notifier).state = [];
+                      ref.read(allTextProvider.notifier).initialize();
                       Navigator.push(
                           context,
                           MaterialPageRoute(
