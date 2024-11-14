@@ -4,8 +4,8 @@ import 'package:owlfourcut/models/chatModel.dart';
 class AllTextListVM extends StateNotifier<List<Chat>> {
   AllTextListVM() : super([]);
 
-  Future setValue() async {
-    state = [];
+  Future setValue(List<Chat> chats) async {
+    state = chats;
   }
 
   initialize() {
