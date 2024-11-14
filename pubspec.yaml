@@ -50,6 +50,7 @@ dependencies:
   social_share:
   flutter_image_compress:
   firebase_core:
+  firebase_database:
   # google_fonts:
   # google_mobile_ads:
 
