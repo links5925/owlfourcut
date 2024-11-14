@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -29,43 +30,37 @@ class _ImagedownscreenState extends ConsumerState<Imagedownscreen> {
   @override
   Widget build(BuildContext context) {
     ScreenshotController screenshotController = ScreenshotController();
-    bool po = true;
     GlobalKey key = GlobalKey();
     Future<void> saveScreenshot(BuildContext context) async {
-      if (po) {
-        setState(() {
-          po = false;
+      // 권한 요청
+      var status = await Permission.storage.request();
+      if (status.isGranted) {
+        debugPrint('권한 승인');
+        // 화면 캡처
+        await screenshotController
+            .capture(pixelRatio: 10)
+            .then((Uint8List? image) async {
+          debugPrint('캡쳐 완');
+
+          if (image != null) {
+            // 캡처한 이미지 저장
+            await ImageGallerySaver.saveImage(image);
+            debugPrint('사진 저장');
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('사진이 저장됐습니다!')),
+            );
+          } else {
+            debugPrint('사진 null');
+          }
+        }).catchError((onError) {
+          debugPrint(onError);
         });
-        // 권한 요청
-        var status = await Permission.storage.request();
-        if (status.isGranted) {
-          debugPrint('권한 승인');
-          // 화면 캡처
-          await screenshotController.capture().then((Uint8List? image) async {
-            debugPrint('캡쳐 완');
-
-            if (image != null) {
-              // 캡처한 이미지 저장
-              await ImageGallerySaver.saveImage(image);
-              debugPrint('사진 저장');
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('사진이 저장됐습니다!')),
-              );
-              po = true;
-            } else {
-              debugPrint('사진 null');
-            }
-          }).catchError((onError) {
-            debugPrint(onError);
-          });
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('접근 권한이 없습니다')),
-          );
-        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('접근 권한이 없습니다')),
+        );
       }
-      po = true;
     }
 
     Future<void> _shareInsta() async {
@@ -73,16 +68,31 @@ class _ImagedownscreenState extends ConsumerState<Imagedownscreen> {
         RenderRepaintBoundary? boundary =
             key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
         if (boundary != null) {
-          final image = await boundary.toImage(pixelRatio: 1.2);
-          final byteData = await image.toByteData(format: ImageByteFormat.png);
+          // 이미지 캡처
+          final image =
+              await boundary.toImage(pixelRatio: 5); // 적절한 pixelRatio 설정
+          final byteData =
+              await image.toByteData(format: ui.ImageByteFormat.png);
           Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-          final tempDir = await getTemporaryDirectory();
-          File file = await File('${tempDir.path}/shared_image.png').create();
-          await file.writeAsBytes(pngBytes);
+          // 이미지 압축 및 해상도 조정
+          var compressedFile = await FlutterImageCompress.compressWithList(
+            pngBytes,
+            minWidth: 1080,
+            minHeight: 1920,
+            quality: 85,
+          );
 
+          // 압축된 이미지를 파일로 저장
+          final tempDir = await getTemporaryDirectory();
+          File finalFile =
+              await File('${tempDir.path}/shared_image_compressed.jpg')
+                  .create();
+          await finalFile.writeAsBytes(compressedFile);
+
+          // 인스타그램 스토리에 공유
           SocialShare.shareInstagramStory(
-            imagePath: file.path,
+            imagePath: finalFile.path,
             backgroundTopColor: "#ffffff",
             backgroundBottomColor: "#000000",
             appId: 'com.yeah.owlfourcut',
