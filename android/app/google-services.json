@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "273690799487",
+    "project_id": "owlfourcut-f7b42",
+    "storage_bucket": "owlfourcut-f7b42.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:273690799487:android:5ae33271c3a837f183fe4a",
+        "android_client_info": {
+          "package_name": "com.yeah.owlfourcut"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQFkIf3U5s_ppcpehJajWukhQixJpBpiE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
