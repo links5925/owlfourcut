@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -13,7 +14,32 @@ class Guestbook extends ConsumerStatefulWidget {
 }
 
 class _GuestbookState extends ConsumerState<Guestbook> {
+  final DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
   TextEditingController controller = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) async {
+        try {
+          final snapshot = await _dbRef.child('chat').get();
+          if (snapshot.exists) {
+            final data = snapshot.value as Map<dynamic, dynamic>;
+            List<Chat> cList = [];
+            data.forEach((key, value) {
+              cList.add(Chat(text: value['text'], time: value['time']));
+            });
+            ref.read(allTextProvider.notifier).setValue(cList);
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('방명록 업로드에 실패했습니다')),
+          );
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -55,7 +81,7 @@ class _GuestbookState extends ConsumerState<Guestbook> {
                               return _container(
                                   ref.watch(mytextProvider)[index]);
                             },
-                          ).reversed,
+                          ),
                         ],
                       ),
                     ),
@@ -73,36 +99,53 @@ class _GuestbookState extends ConsumerState<Guestbook> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Expanded(
-                          child: TextField(
-                        controller: controller,
-                        maxLength: 500,
-                        maxLines: 10,
-                        autofocus: false,
-                        showCursor: true,
-                        cursorColor: AppColors.colors6_3,
-                        cursorHeight: 20,
-                        decoration: const InputDecoration(
-                            counterText: '',
-                            counterStyle: TextStyle(height: double.minPositive),
-                            border: UnderlineInputBorder(
-                                borderSide: BorderSide.none)),
-                      )),
-                      const Gap(20),
-                      GestureDetector(
-                        onTap: () {
-                          ref.read(mytextProvider.notifier).state = [
-                            ...ref.watch(mytextProvider),
-                            Chat.now(controller.text)
-                          ];
-                          controller.clear();
-                        },
-                        child: Icon(
-                          Icons.send,
-                          size: 20,
-                          color: Colors.blue[300],
+                      Container(
+                        alignment: Alignment.topCenter,
+                        padding: const EdgeInsets.only(left: 15, bottom: 5),
+                        width: MediaQuery.sizeOf(context).width - 80,
+                        height: 40,
+                        decoration: BoxDecoration(
+                            color: Colors.grey.withOpacity(0.4),
+                            borderRadius: BorderRadius.circular(30)),
+                        child: TextField(
+                          controller: controller,
+                          maxLength: 500,
+                          maxLines: 10,
+                          autofocus: false,
+                          showCursor: true,
+                          cursorColor: AppColors.colors6_3,
+                          cursorHeight: 20,
+                          decoration: const InputDecoration(
+                              counterText: '',
+                              counterStyle:
+                                  TextStyle(height: double.minPositive),
+                              border: UnderlineInputBorder(
+                                  borderSide: BorderSide.none)),
                         ),
-                      )
+                      ),
+                      const Gap(15),
+                      GestureDetector(
+                          onTap: () async {
+                            ref.read(mytextProvider.notifier).state = [
+                              ...ref.watch(mytextProvider),
+                              Chat.now(controller.text)
+                            ];
+                            if (controller.text != '') {
+                              Chat chat = Chat.now(controller.text);
+                              try {
+                                await _dbRef.child('chat').push().set(
+                                    {'text': chat.text, 'time': chat.time});
+                              } catch (error) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('방명록 작성에 실패했습니다')),
+                                );
+                              }
+                            }
+                            controller.clear();
+                          },
+                          child: Icon(Icons.send,
+                              size: 20, color: Colors.blue[300]))
                     ],
                   ),
                 )
@@ -135,7 +178,7 @@ class _GuestbookState extends ConsumerState<Guestbook> {
         const Gap(6),
         Text(
           chat.time,
-          style: TextStyle(color: Colors.grey, fontSize: 10),
+          style: const TextStyle(color: Colors.grey, fontSize: 10),
         )
       ],
     );
