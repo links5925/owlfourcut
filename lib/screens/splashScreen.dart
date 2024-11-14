@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:owlfourcut/screens/getImagesScreen.dart';
+import 'package:owlfourcut/screens/guestBook.dart';
 
 class Splashscreen extends ConsumerStatefulWidget {
   const Splashscreen({super.key});
@@ -53,6 +54,16 @@ class _SplashscreenState extends ConsumerState<Splashscreen> {
                               builder: (context) => const Getimagesscreen()));
                     },
                     child: const Text('시작하기',
+                        style: TextStyle(color: Colors.black, fontSize: 20))),
+                const Gap(30),
+                GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Guestbook()));
+                    },
+                    child: const Text('방명록',
                         style: TextStyle(color: Colors.black, fontSize: 20))),
               ],
             ),
