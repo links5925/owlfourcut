@@ -48,8 +48,9 @@ dependencies:
   screenshot:
   permission_handler:
   social_share:
-  google_fonts:
-  google_mobile_ads:
+  flutter_image_compress:
+  # google_fonts:
+  # google_mobile_ads:
 
 dev_dependencies:
   flutter_test:
