@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:owlfourcut/theme/colors.dart';
 import 'package:owlfourcut/viewModels/frameColorVm.dart';
 import 'package:owlfourcut/viewModels/imageSelectVM.dart';
 
@@ -15,34 +16,33 @@ class Mainframe1 extends ConsumerStatefulWidget {
 class _Mainframe1State extends ConsumerState<Mainframe1> {
   @override
   Widget build(BuildContext context) {
+    double frameWidth = ((MediaQuery.sizeOf(context).width - 60) / 2);
     return Container(
-      height: MediaQuery.sizeOf(context).height - 200,
-      width: (MediaQuery.sizeOf(context).width - 60) / 2,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      height: frameWidth * 3 + 7,
+      width: frameWidth,
+      padding: EdgeInsets.symmetric(horizontal: frameWidth) * 0.108,
       decoration: BoxDecoration(
           color: Colors.white, border: Border.all(color: Colors.black)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Gap(10),
+          Gap(frameWidth * 0.41),
           ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: 4,
             itemBuilder: (BuildContext context, int index) {
               return Padding(
-                padding: (EdgeInsets.only(
-                    bottom: ((MediaQuery.sizeOf(context).height - 300) -
-                            ((MediaQuery.sizeOf(context).width - 100) * 1.5)) /
-                        4)),
+                padding: index < 3
+                    ? (EdgeInsets.only(bottom: frameWidth * 0.026))
+                    : const EdgeInsets.all(0),
                 child: GestureDetector(
                   onTap: () {
                     ref.read(imageSelectProvider.notifier).removeImage(index);
                   },
                   child: Container(
-                    width: (MediaQuery.sizeOf(context).width - 100) / 2,
-                    height:
-                        ((MediaQuery.sizeOf(context).width - 100) / 2) / 4 * 3,
+                    width: frameWidth * 0.783,
+                    height: frameWidth * 0.588,
                     decoration: BoxDecoration(
                         color: Colors.grey,
                         image: ref.watch(imageSelectProvider).length > index
@@ -56,9 +56,6 @@ class _Mainframe1State extends ConsumerState<Mainframe1> {
               );
             },
           ),
-          const Spacer(),
-          const Text('Made by Yeah', style: TextStyle(fontSize: 10)),
-          const Gap(10)
         ],
       ),
     );
@@ -75,31 +72,30 @@ class Mainframe2 extends ConsumerStatefulWidget {
 class _Mainframe2State extends ConsumerState<Mainframe2> {
   @override
   Widget build(BuildContext context) {
+    double frameWidth = ((MediaQuery.sizeOf(context).width - 60) / 2);
     return Container(
-      height: MediaQuery.sizeOf(context).height - 200,
-      width: (MediaQuery.sizeOf(context).width - 60) / 2,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      height: frameWidth * 3 + 7,
+      width: frameWidth,
+      padding: EdgeInsets.symmetric(horizontal: frameWidth) * 0.108,
       decoration: BoxDecoration(
           color: ref.watch(frameColorProvider),
           border: Border.all(color: Colors.black)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Gap(10),
+          Gap(frameWidth * 0.41),
           ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: 4,
             itemBuilder: (BuildContext context, int index) {
               return Padding(
-                padding: (EdgeInsets.only(
-                    bottom: ((MediaQuery.sizeOf(context).height - 300) -
-                            ((MediaQuery.sizeOf(context).width - 100) * 1.5)) /
-                        4)),
+                padding: index < 3
+                    ? (EdgeInsets.only(bottom: frameWidth * 0.026))
+                    : const EdgeInsets.all(0),
                 child: Container(
-                  width: (MediaQuery.sizeOf(context).width - 100) / 2,
-                  height:
-                      ((MediaQuery.sizeOf(context).width - 100) / 2) / 4 * 3,
+                  width: frameWidth * 0.783,
+                  height: frameWidth * 0.588,
                   decoration: BoxDecoration(
                       color: Colors.grey,
                       image: ref.watch(imageSelectProvider).length > index
@@ -112,9 +108,7 @@ class _Mainframe2State extends ConsumerState<Mainframe2> {
               );
             },
           ),
-          const Spacer(),
-          const Text('Made by Yeah', style: TextStyle(fontSize: 10)),
-          const Gap(10)
+          // const Text('Made by Yeah', style: TextStyle(fontSize: 10)),
         ],
       ),
     );
@@ -131,10 +125,11 @@ class Mainframe3 extends ConsumerStatefulWidget {
 class _Mainframe3State extends ConsumerState<Mainframe3> {
   @override
   Widget build(BuildContext context) {
+    double frameWidth = ((MediaQuery.sizeOf(context).width - 60) / 2);
     return Container(
-      height: (MediaQuery.sizeOf(context).height - 200) * 0.75,
-      width: ((MediaQuery.sizeOf(context).width - 60) / 2) * 0.75,
-      padding: const EdgeInsets.symmetric(horizontal: 7.5),
+      height: frameWidth * 3 + 7,
+      width: frameWidth,
+      padding: EdgeInsets.symmetric(horizontal: frameWidth) * 0.108,
       decoration: BoxDecoration(
           color: ref.watch(frameColorProvider),
           border: Border.all(color: Colors.black)),
@@ -148,17 +143,12 @@ class _Mainframe3State extends ConsumerState<Mainframe3> {
             itemCount: 4,
             itemBuilder: (BuildContext context, int index) {
               return Padding(
-                padding: (EdgeInsets.only(
-                        bottom: ((MediaQuery.sizeOf(context).height - 300) -
-                                ((MediaQuery.sizeOf(context).width - 100) *
-                                    1.5)) *
-                            3 /
-                            4) /
-                    4),
+                padding: index < 3
+                    ? (EdgeInsets.only(bottom: frameWidth * 0.026))
+                    : const EdgeInsets.all(0),
                 child: Container(
-                  width: (MediaQuery.sizeOf(context).width - 100) / 8 * 3,
-                  height:
-                      ((MediaQuery.sizeOf(context).width - 100) / 2) / 16 * 9,
+                  width: frameWidth * 0.783,
+                  height: frameWidth * 0.588,
                   decoration: BoxDecoration(
                       color: Colors.grey,
                       image: ref.watch(imageSelectProvider).length > index
@@ -171,11 +161,134 @@ class _Mainframe3State extends ConsumerState<Mainframe3> {
               );
             },
           ),
-          const Spacer(),
-          const Text('Made by Yeah', style: TextStyle(fontSize: 8)),
-          const Gap(7.5)
         ],
       ),
+    );
+  }
+}
+
+class CustomFrame1 extends ConsumerStatefulWidget {
+  const CustomFrame1({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _CustomFrame1State();
+}
+
+class _CustomFrame1State extends ConsumerState<CustomFrame1> {
+  @override
+  Widget build(BuildContext context) {
+    double frameWidth = ((MediaQuery.sizeOf(context).width - 60) / 2);
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        Container(
+          height: frameWidth * 3 + 7,
+          width: frameWidth,
+          padding: EdgeInsets.symmetric(horizontal: frameWidth) * 0.108,
+          decoration: BoxDecoration(
+              color: AppColors.frame1, border: Border.all(color: Colors.black)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Gap(frameWidth * 0.41),
+              ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: 4,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: index < 3
+                        ? (EdgeInsets.only(bottom: frameWidth * 0.026))
+                        : const EdgeInsets.all(0),
+                    child: Container(
+                      width: frameWidth * 0.783,
+                      height: frameWidth * 0.588,
+                      decoration: BoxDecoration(
+                          color: AppColors.frame1,
+                          image: ref.watch(imageSelectProvider).length > index
+                              ? DecorationImage(
+                                  image: FileImage(
+                                      ref.watch(imageSelectProvider)[index]),
+                                  fit: BoxFit.cover)
+                              : null),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+        Container(
+          height: (MediaQuery.sizeOf(context).width - 60) / 2 * 3,
+          width: (MediaQuery.sizeOf(context).width - 60) / 2,
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/frame1.png'), fit: BoxFit.contain)),
+        ),
+      ],
+    );
+  }
+}
+
+class CustomFrame2 extends ConsumerStatefulWidget {
+  const CustomFrame2({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _CustomFrame2State();
+}
+
+class _CustomFrame2State extends ConsumerState<CustomFrame2> {
+  @override
+  Widget build(BuildContext context) {
+    double frameWidth = ((MediaQuery.sizeOf(context).width - 60) / 2);
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        Container(
+          height: frameWidth * 3 + 7,
+          width: frameWidth,
+          padding: EdgeInsets.symmetric(horizontal: frameWidth) * 0.108,
+          decoration: BoxDecoration(
+              color: AppColors.frame2, border: Border.all(color: Colors.black)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Gap(frameWidth * 0.15),
+              ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: 4,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: index < 3
+                        ? (EdgeInsets.only(bottom: frameWidth * 0.026))
+                        : const EdgeInsets.all(0),
+                    child: Container(
+                      width: frameWidth * 0.783,
+                      height: frameWidth * 0.588,
+                      decoration: BoxDecoration(
+                          color: AppColors.frame2,
+                          image: ref.watch(imageSelectProvider).length > index
+                              ? DecorationImage(
+                                  image: FileImage(
+                                      ref.watch(imageSelectProvider)[index]),
+                                  fit: BoxFit.cover)
+                              : null),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+        Container(
+          height: (MediaQuery.sizeOf(context).width - 60) / 2 * 3,
+          width: (MediaQuery.sizeOf(context).width - 60) / 2,
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/frame2.png'), fit: BoxFit.contain)),
+        ),
+      ],
     );
   }
 }

@@ -48,7 +48,15 @@ class _SetDetailFrameState extends ConsumerState<SetDetailFrame> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [const Mainframe2(), const Gap(20), _right()],
+                  children: [
+                    (ref.watch(frameSelectProvider) == 1)
+                        ? const CustomFrame1()
+                        : ref.watch(frameSelectProvider) == 2
+                            ? const CustomFrame2()
+                            : const Mainframe2(),
+                    const Gap(20),
+                    _right()
+                  ],
                 ),
               ),
             ],
@@ -65,6 +73,19 @@ class _SetDetailFrameState extends ConsumerState<SetDetailFrame> {
         height: MediaQuery.sizeOf(context).height - 200,
         child: ListView(
           children: [
+            const Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                '  부엉네컷 프레임',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+            Wrap(
+              children: [
+                _customFrameContainer(1, AppColors.frame1),
+                _customFrameContainer(2, AppColors.frame2)
+              ],
+            ),
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
@@ -169,6 +190,8 @@ class _SetDetailFrameState extends ConsumerState<SetDetailFrame> {
   Widget _colorContainer(Color color) {
     return GestureDetector(
       onTap: () {
+        ref.read(frameSelectProvider.notifier).state = 0;
+
         if (ref.watch(frameColorProvider) == color) {
           ref.read(frameColorProvider.notifier).state = const Color(0xffffffff);
         } else {
@@ -188,6 +211,44 @@ class _SetDetailFrameState extends ConsumerState<SetDetailFrame> {
                   color: color, border: Border.all(color: Colors.black)),
             ),
             ref.watch(frameColorProvider) == color
+                ? Container(
+                    margin: const EdgeInsets.all(5),
+                    width: 40,
+                    height: 40,
+                    color: Colors.grey.withOpacity(0.9),
+                    child: const Icon(Icons.check_circle_outline_outlined,
+                        color: Colors.brown),
+                  )
+                : Container()
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _customFrameContainer(int index, Color color) {
+    return GestureDetector(
+      onTap: () {
+        ref.read(frameColorProvider.notifier).state = Color(0xffffffff);
+        if (ref.watch(frameSelectProvider) == index) {
+          ref.read(frameSelectProvider.notifier).state = 0;
+        } else {
+          ref.read(frameSelectProvider.notifier).state = index;
+        }
+      },
+      child: SizedBox(
+        width: 50,
+        height: 50,
+        child: Stack(
+          children: [
+            Container(
+              margin: const EdgeInsets.all(5),
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                  color: color, border: Border.all(color: Colors.black)),
+            ),
+            ref.watch(frameSelectProvider) == index
                 ? Container(
                     margin: const EdgeInsets.all(5),
                     width: 40,

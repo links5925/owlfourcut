@@ -39,7 +39,7 @@ class _GetimagesscreenState extends ConsumerState<Getimagesscreen> {
 
   @override
   void dispose() {
-    _controller!.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 

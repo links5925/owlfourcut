@@ -91,12 +91,17 @@ class _ImagedownscreenState extends ConsumerState<Imagedownscreen> {
           await finalFile.writeAsBytes(compressedFile);
 
           // 인스타그램 스토리에 공유
-          SocialShare.shareInstagramStory(
+          String? text = await SocialShare.shareInstagramStory(
             imagePath: finalFile.path,
             backgroundTopColor: "#ffffff",
             backgroundBottomColor: "#000000",
             appId: 'com.yeah.owlfourcut',
           );
+          if (text == 'error') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('인스타그램 앱으로 연결할 수 없습니다')),
+            );
+          }
         } else {
           debugPrint("Boundary is null");
         }
@@ -183,7 +188,13 @@ class _ImagedownscreenState extends ConsumerState<Imagedownscreen> {
                 const Gap(20),
                 Screenshot(
                     controller: screenshotController,
-                    child: RepaintBoundary(key: key, child: const Mainframe3()))
+                    child: RepaintBoundary(
+                        key: key,
+                        child: (ref.watch(frameSelectProvider) == 1)
+                            ? const CustomFrame1()
+                            : ref.watch(frameSelectProvider) == 2
+                                ? const CustomFrame2()
+                                : const Mainframe2()))
               ],
             ),
           )),

@@ -1,10 +1,13 @@
+import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:owlfourcut/models/chatModel.dart';
 import 'package:owlfourcut/theme/colors.dart';
 import 'package:owlfourcut/viewModels/myTextVM.dart';
+import 'package:http/http.dart' as http;
 
 class Guestbook extends ConsumerStatefulWidget {
   const Guestbook({super.key});
@@ -16,21 +19,31 @@ class Guestbook extends ConsumerStatefulWidget {
 class _GuestbookState extends ConsumerState<Guestbook> {
   final DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
   TextEditingController controller = TextEditingController();
+  String _changer(String value) {
+    DateTime dateTime = DateTime.parse(value);
+
+    String formattedDate = DateFormat("MM/dd HH:mm").format(dateTime);
+    return formattedDate;
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
         try {
-          final snapshot = await _dbRef.child('chat').get();
-          if (snapshot.exists) {
-            final data = snapshot.value as Map<dynamic, dynamic>;
-            List<Chat> cList = [];
-            data.forEach((key, value) {
-              cList.add(Chat(text: value['text'], time: value['time']));
-            });
-            ref.read(allTextProvider.notifier).setValue(cList);
-          }
+          Uri url = Uri.parse('http://13.209.240.117:8080/guestbook/get');
+          final response = await http.get(url);
+          if (response.statusCode == 200) {
+            Map<String, dynamic> responseData =
+                json.decode(utf8.decode(response.bodyBytes));
+            List datas = responseData['data']['guestBookList'];
+            ref.read(allTextProvider.notifier).setValue(datas.map((v) {
+                  return Chat(
+                      text: v['content'] ?? '',
+                      time: _changer(v['createdAt'] ?? ''));
+                }).toList());
+          } else {}
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('방명록 업로드에 실패했습니다')),
@@ -70,18 +83,20 @@ class _GuestbookState extends ConsumerState<Guestbook> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          ...List.generate(
+                            ref.watch(mytextProvider).length,
+                            (index) {
+                              return _container(ref.watch(mytextProvider)[
+                                  ref.watch(mytextProvider).length -
+                                      index -
+                                      1]);
+                            },
+                          ),
                           ...ref.watch(allTextProvider).map(
                             (e) {
                               return _container(e);
                             },
-                          ),
-                          ...List.generate(
-                            ref.watch(mytextProvider).length,
-                            (index) {
-                              return _container(
-                                  ref.watch(mytextProvider)[index]);
-                            },
-                          ),
+                          )
                         ],
                       ),
                     ),
@@ -131,11 +146,17 @@ class _GuestbookState extends ConsumerState<Guestbook> {
                               Chat.now(controller.text)
                             ];
                             if (controller.text != '') {
-                              Chat chat = Chat.now(controller.text);
                               try {
-                                await _dbRef.child('chat').push().set(
-                                    {'text': chat.text, 'time': chat.time});
+                                final a = await http.post(
+                                    Uri.parse(
+                                        'http://13.209.240.117:8080/guestbook/write'),
+                                    body: jsonEncode({"content": controller.text}),
+                                    headers: {
+                                      'Content-Type': 'application/json'
+                                    });
+                                print(a.statusCode);
                               } catch (error) {
+                                print(error);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text('방명록 작성에 실패했습니다')),
@@ -168,7 +189,7 @@ class _GuestbookState extends ConsumerState<Guestbook> {
           constraints:
               BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.6),
           decoration: BoxDecoration(
-              color: AppColors.colors6_3.withOpacity(0.6),
+              color: AppColors.chat.withOpacity(0.8),
               borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(15),
                   bottomLeft: Radius.circular(15),
@@ -179,7 +200,45 @@ class _GuestbookState extends ConsumerState<Guestbook> {
         Text(
           chat.time,
           style: const TextStyle(color: Colors.grey, fontSize: 10),
-        )
+        ),
+        const Gap(5),
+        InkWell(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('신고'),
+                    content: const Text('이 댓글을 신고하시겠습니까?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text(
+                          '취소',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text(
+                          '확인',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: const Icon(
+              Icons.notification_important_outlined,
+              size: 13,
+              color: Colors.grey,
+            ))
       ],
     );
   }
